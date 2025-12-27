@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-final class HapticsService {
+class HapticsService {
     func selectionChanged(enabled: Bool) {
         guard enabled else { return }
         let generator = UISelectionFeedbackGenerator()

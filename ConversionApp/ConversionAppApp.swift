@@ -16,7 +16,7 @@ struct ConversionAppApp: App {
                 .environment(\.hapticsService, hapticsService)
                 .environment(\.userSettings, userSettings)
                 .modelContainer(persistenceController.container)
-                .preferredColorScheme(nil)
+                .preferredColorScheme(.dark)
         }
     }
 }

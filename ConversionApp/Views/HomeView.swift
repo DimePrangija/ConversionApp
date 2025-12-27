@@ -8,14 +8,18 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    inputSection
-                    resultSection
-                    actionButtons
-                    infoSection
+            ZStack {
+                Color.appBackground.ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        inputSection
+                        resultSection
+                        actionButtons
+                        infoSection
+                    }
+                    .padding()
                 }
-                .padding()
             }
             .navigationTitle("Weight Converter")
             .toolbar {
@@ -25,16 +29,26 @@ struct HomeView: View {
                 }
             }
         }
+        .tint(.buttonAccent)
     }
 
     private var inputSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Enter weight")
                 .font(.headline)
-            HStack {
+                .foregroundStyle(.white)
+
+            HStack(spacing: 12) {
                 TextField("0.0", text: $viewModel.inputText)
                     .keyboardType(.decimalPad)
-                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                    .background(Color.white.opacity(0.12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .cornerRadius(12)
+                    .foregroundStyle(.white)
                     .focused($isInputFocused)
                     .accessibilityLabel("Weight input")
 
@@ -44,6 +58,15 @@ struct HomeView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(Color.white.opacity(0.12))
+                .cornerRadius(12)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                )
+                .foregroundStyle(.white)
                 .accessibilityLabel("Conversion direction")
             }
 
@@ -51,31 +74,33 @@ struct HomeView: View {
                 viewModel.swapUnits()
             } label: {
                 Label("Swap units", systemImage: "arrow.up.arrow.down")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(GradientButtonStyle())
             .accessibilityLabel("Swap units between pounds and kilograms")
         }
+        .appCardStyle()
     }
 
     private var resultSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Result")
                 .font(.headline)
+                .foregroundStyle(.white)
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(viewModel.resultText)
                     .font(.system(size: 42, weight: .semibold, design: .rounded))
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
+                    .foregroundStyle(.white)
                 Text(viewModel.direction.to.shortLabel)
                     .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.7))
             }
             Text(viewModel.direction.accessibleLabel)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.7))
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCardStyle()
     }
 
     private var actionButtons: some View {
@@ -84,9 +109,8 @@ struct HomeView: View {
                 viewModel.copyResult()
             } label: {
                 Label("Copy result", systemImage: "doc.on.doc")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(GradientButtonStyle())
             .disabled(viewModel.lastResult == nil)
             .accessibilityLabel("Copy conversion result to clipboard")
 
@@ -94,25 +118,28 @@ struct HomeView: View {
                 Task { await viewModel.saveToHistory(context: context) }
             } label: {
                 Label("Save to history", systemImage: "square.and.arrow.down")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(GradientButtonStyle())
             .disabled(viewModel.lastResult == nil)
             .accessibilityLabel("Save this conversion to history")
         }
+        .appCardStyle()
     }
 
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Tips")
                 .font(.headline)
+                .foregroundStyle(.white)
             Text("• Live conversion updates as you type with rounding to your preferred decimal places.")
+                .foregroundStyle(.white)
             Text("• Negative numbers are supported and labeled in the result.")
+                .foregroundStyle(.white)
             Text("• Works fully offline; history syncs when the optional server is reachable.")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.7))
         }
         .font(.footnote)
-        .foregroundStyle(.secondary)
+        .appCardStyle()
     }
 }
 

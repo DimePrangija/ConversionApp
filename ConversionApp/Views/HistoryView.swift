@@ -9,21 +9,29 @@ struct HistoryView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                if filteredRecords.isEmpty {
-                    ContentUnavailableView("No history", systemImage: "clock", description: Text("Save a conversion to see it here."))
-                } else {
-                    ForEach(filteredRecords) { record in
-                        HistoryRow(record: record)
-                            .swipeActions {
-                                Button(role: .destructive) {
-                                    viewModel.delete(record, context: context)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+            ZStack {
+                Color.appBackground.ignoresSafeArea()
+
+                List {
+                    if filteredRecords.isEmpty {
+                        ContentUnavailableView("No history", systemImage: "clock", description: Text("Save a conversion to see it here."))
+                            .foregroundStyle(.white)
+                            .listRowBackground(Color.clear)
+                    } else {
+                        ForEach(filteredRecords) { record in
+                            HistoryRow(record: record)
+                                .listRowBackground(Color.cardBackground)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.delete(record, context: context)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
-                            }
+                        }
                     }
                 }
+                .scrollContentBackground(.hidden)
             }
             .navigationTitle("History")
             .searchable(text: $viewModel.searchText, placement: .navigationBarDrawer(displayMode: .automatic))
@@ -79,14 +87,16 @@ struct HistoryRow: View {
             HStack {
                 Text("\(record.inputValue, specifier: "%.4f") \(record.fromUnit.shortLabel)")
                     .font(.subheadline)
+                    .foregroundStyle(.white)
                 Image(systemName: "arrow.right")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.6))
                 Text("\(record.resultValue, specifier: "%.4f") \(record.toUnit.shortLabel)")
                     .font(.headline)
+                    .foregroundStyle(.white)
             }
             Text(formatter.string(from: record.timestamp))
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.6))
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(record.fromUnit.displayName) to \(record.toUnit.displayName) on \(formatter.string(from: record.timestamp))")
